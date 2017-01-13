@@ -8,7 +8,7 @@ var Enemy = function(y, speed) {
     this.sprite = 'images/enemy-bug.png';
 
     //The location of our enemies
-    this.x = 0; //Starting value
+    this.x = -100; //Starting value
     this.y = y; //Starting value
 
     //The speed of our enemies
@@ -33,6 +33,8 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -41,19 +43,28 @@ var Player = function() {
     //The image/sprite for our player
     this.sprite = 'images/char-boy.png';
 
+    //The initial x and y values for player
+    this.initial_x = 210;
+    this.initial_y = 400;
+
     //The location of our player
-    this.x = 210;
-    this.y = 400;
-}
+    this.x = this.initial_x;
+    this.y = this.initial_y;
+};
 
-Player.prototype.update = function() {
+/*  No use for this method currently since the player's position is updated
+    from within the key press event handler
+*/
+// Player.prototype.update = function() {
 
-}
+// }
 
+// This function renders the player according to its position on the game track
 Player.prototype.render = function () {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
+//The mandatory event handler for keypress events
 Player.prototype.handleInput = function(keyPressed) {
 
     switch(keyPressed) {
@@ -77,15 +88,20 @@ Player.prototype.handleInput = function(keyPressed) {
                 this.y = this.y - 83;
             }
             break;
+        case "enter":
+            gameState = "starting";
+            break;
     }
-}
+};
+
+
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-var allEnemies = [new Enemy(75, 10), new Enemy(75, 50), new Enemy(75, 150), new Enemy(150, 70),
-    new Enemy(150, 170), new Enemy(150, 250), new Enemy(225, 40), new Enemy(225, 90), new Enemy(225, 190),
+var allEnemies = [new Enemy(60, 10), new Enemy(60, 50), new Enemy(60, 150), new Enemy(145, 70),
+    new Enemy(145, 170), new Enemy(145, 250), new Enemy(225, 40), new Enemy(225, 90), new Enemy(225, 190),
         new Enemy(225, 290)];
 
 var player = new Player();
@@ -98,7 +114,8 @@ document.addEventListener('keyup', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        13: 'enter'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);

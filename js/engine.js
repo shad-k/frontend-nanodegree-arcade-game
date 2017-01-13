@@ -23,7 +23,10 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        gameState = "menu",
+        i = 3,
+        level = 0;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -42,11 +45,24 @@ var Engine = (function(global) {
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
-        /* Call our update/render functions, pass along the time delta to
-         * our update function since it may be used for smooth animation.
-         */
-        update(dt);
-        render();
+        if(global.gameState === "menu") {
+            render();
+            menu();
+        }
+        else if(global.gameState === "starting") {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            render();
+
+            startGame(dt);
+        }
+        else if(global.gameState === "running") {
+            /* Call our update/render functions, pass along the time delta to
+             * our update function since it may be used for smooth animation.
+            */
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            update(dt);
+            render();
+        }
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -69,6 +85,36 @@ var Engine = (function(global) {
         main();
     }
 
+    /* This function just fancies up the start process and
+     * sets the gameState variable to running
+    */
+    function startGame(dt) {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, 50, canvas.width, canvas.height - 70);
+        ctx.font = "36px sans-serif";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        i = i - 0.01;
+        console.log(Math.ceil(i));
+        ctx.fillText("Game starting in " + Math.ceil(i), canvas.width/2, 300);
+        if(i < 0 ) {
+            global.gameState = "running";
+        }
+    }
+
+    /* This function is called by main to draw the game start menu
+    */
+    function menu() {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, 50, canvas.width, canvas.height - 70);
+        ctx.font = "36px sans-serif";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("To Start the game press Enter", canvas.width/2, 300);
+        ctx.font = "48px sans-serif";
+        ctx.fillText("Level " + level, canvas.width/2, 400);
+    }
+
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -79,8 +125,9 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
+        //checkCollisions();
         updateEntities(dt);
-        // checkCollisions();
+
     }
 
     /* This is called by the update function and loops through all of the
@@ -162,8 +209,11 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+
     }
+
+
+
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -183,4 +233,7 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+
+    // Make the gameState variable global by assigning it to the global variable
+    global.gameState = gameState;
 })(this);
