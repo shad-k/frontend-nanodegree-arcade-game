@@ -24,9 +24,15 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime,
-        gameState = "menu",
-        i = 3,
-        level = 0;
+        timer = 3;
+
+    // The variable stores the current level of the game, starting from 1
+    var level = 1;
+
+    /* Declare and initialize the gameState variable to keep a track of the
+     * state of the game
+     */
+    var gameState = "menu";
 
     canvas.width = 505;
     canvas.height = 606;
@@ -45,23 +51,41 @@ var Engine = (function(global) {
         var now = Date.now(),
             dt = (now - lastTime) / 1000.0;
 
+        // Check to see if the game is yet to start
         if(global.gameState === "menu") {
+            /* Call the render function to render the basic game track and player
+             * and then call the menu function to display the starting menu with
+             * level number
+             */
             render();
             menu();
         }
+        // Check to see if the user has started the game
         else if(global.gameState === "starting") {
+            /* Clear the canvas to draw the starting message
+             * and call the startGame method to draw a fancy starting message
+             * with a countdown to let the user get ready
+             */
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             render();
-
-            startGame(dt);
+            startGame();
         }
+        // Check to see if the game is in the "running" state
         else if(global.gameState === "running") {
             /* Call our update/render functions, pass along the time delta to
              * our update function since it may be used for smooth animation.
             */
-            // ctx.clearRect(0, 0, canvas.width, canvas.height);
             update(dt);
             render();
+        }
+        // Check to see if player passed the level
+        else if(global.gameState === "level-up") {
+            /* This is to remove the small part of head that remains outside
+             * the game track
+             */
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            render();
+            levelup();
         }
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -85,34 +109,36 @@ var Engine = (function(global) {
         main();
     }
 
-    /* This function just fancies up the start process and
-     * sets the gameState variable to running
-    */
-    function startGame(dt) {
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.fillRect(0, 50, canvas.width, canvas.height - 70);
-        ctx.font = "36px sans-serif";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        i = i - 0.01;
-        console.log(Math.ceil(i));
-        ctx.fillText("Game starting in " + Math.ceil(i), canvas.width/2, 300);
-        if(i < 0 ) {
-            global.gameState = "running";
-        }
+    /* This function is called by main to draw the game start menu
+     * Draws a transparent black screen over the game track
+     * and shows welcome text along with the level number
+     */
+    function menu() {
+        drawScreen();
+
+        // ctx.font = "64px sans-serif";
+        ctx.fillText("To start the game press Enter", canvas.width/2, 300);
     }
 
-    /* This function is called by main to draw the game start menu
-    */
-    function menu() {
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.fillRect(0, 50, canvas.width, canvas.height - 70);
-        ctx.font = "36px sans-serif";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText("To Start the game press Enter", canvas.width/2, 300);
+    /* This function just fancies up the start process
+     * Draws a transparent screen over the track and then shows a countdown timer
+     * When countdown hits "0", sets the gameState variable to "running"
+     */
+    function startGame() {
+        drawScreen();
+
+        // Countdown count
+        global.timer -= 0.02;
+
+        // Use Math.ceil() to show integers
+        ctx.fillText("Game starting in " + Math.ceil(global.timer), canvas.width/2, 300);
         ctx.font = "48px sans-serif";
-        ctx.fillText("Level " + level, canvas.width/2, 400);
+        ctx.fillText("Level " + global.level, canvas.width/2, 400);
+
+        // After countdown ends
+        if(global.timer < 0 ) {
+            global.gameState = "running";
+        }
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -127,7 +153,7 @@ var Engine = (function(global) {
     function update(dt) {
         checkCollisions();
         updateEntities(dt);
-
+        hasPlayerWon();
     }
 
     /* This is called by the update function and loops through all of the
@@ -204,6 +230,30 @@ var Engine = (function(global) {
         player.render();
     }
 
+    // This function calls the won function of the player object
+    function hasPlayerWon() {
+        player.won();
+    }
+
+    function levelup() {
+        drawScreen();
+        ctx.fillText("Yayy!! You won!", canvas.width/2, 150);
+        global.timer -= 0.02;
+        ctx.fillText("Starting Level " + global.level + " in " +
+            Math.ceil(global.timer), canvas.width/2, 300);
+
+        if(global.timer < 0 ) {
+            increaseSpeed();
+            global.gameState = "running";
+        }
+    }
+
+    function increaseSpeed() {
+        allEnemies.forEach(function(enemy) {
+            enemy.speed += 100;
+        })
+    }
+
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
@@ -212,7 +262,21 @@ var Engine = (function(global) {
 
     }
 
-    // This function detects the collisions if any between enemies and players
+    /* This function draws a transparent black screen for showing messages
+     * on the game board
+     */
+     function drawScreen() {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, 50, canvas.width, canvas.height - 70);
+        ctx.font = "36px sans-serif";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+     }
+
+    /* This function detects the collisions if any between enemies and players
+     * The function loops over all the enemy objects and calls their collision
+     * checking functions to detect collisions
+     */
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
             enemy.checkCollision();
@@ -239,6 +303,12 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
 
-    // Make the gameState variable global by assigning it to the global variable
+    /* Make the gameState variable global by assigning it to the global variable
+     * so that different states can be set through it during the game.
+     */
     global.gameState = gameState;
+
+    // Make the level and timer variables globally accessible
+    global.level = level;
+    global.timer =timer;
 })(this);

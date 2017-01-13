@@ -33,13 +33,16 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Method to check if the enemy collides with the player
+/* Method to check if the enemy collides with the player
+ * Checks if the player's location is the same as the bug location.
+ * If yes, raises the collision state and resets the player
+ */
 Enemy.prototype.checkCollision = function() {
     //Checking to see if the player is near the enemy bug
     if(player.y > this.y - 10 && player.y < this.y + 10) {
-        if(player.x > this.x - 50 && player.x < this.x + 60) {
+        if(player.x > this.x - 50 && player.x < this.x + 70) {
             // If there is a collision reset the game
-            console.log("collision");
+            gameState = "lost";
             player.y = player.initial_y;
         }
     }
@@ -79,22 +82,22 @@ Player.prototype.handleInput = function(keyPressed) {
 
     switch(keyPressed) {
         case "left":
-            if(this.x > 10) {
+            if(this.x > 10 && gameState === "running") {
                 this.x = this.x - 101;
             }
             break;
         case "right":
-            if(this.x < 400) {
+            if(this.x < 400 && gameState === "running") {
                this.x = this.x + 101;
             }
             break;
         case "down":
-            if(this.y < 400) {
+            if(this.y < 400 && gameState === "running") {
                this.y = this.y + 83;
             }
             break;
         case "up":
-            if(this.y > 50) {
+            if(this.y > 50 && gameState === "running") {
                 this.y = this.y - 83;
             }
             break;
@@ -104,7 +107,18 @@ Player.prototype.handleInput = function(keyPressed) {
     }
 };
 
+// This method checks to see if the player has won the game
+Player.prototype.won = function() {
+    if(player.y < 0 ) {
 
+        console.log("Player has won");
+        player.y = player.initial_y;
+        player.x = player.initial_x;
+        timer = 3;
+        gameState = "level-up";
+        level++;
+    }
+};
 
 
 // Now instantiate your objects.
@@ -125,7 +139,8 @@ document.addEventListener('keyup', function(e) {
         38: 'up',
         39: 'right',
         40: 'down',
-        13: 'enter'
+        13: 'enter',
+        27: 'esc'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
