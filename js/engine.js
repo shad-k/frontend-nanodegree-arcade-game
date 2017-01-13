@@ -125,7 +125,7 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        //checkCollisions();
+        checkCollisions();
         updateEntities(dt);
 
     }
@@ -212,7 +212,12 @@ var Engine = (function(global) {
 
     }
 
-
+    // This function detects the collisions if any between enemies and players
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            enemy.checkCollision();
+        });
+    }
 
 
     /* Go ahead and load all of the images we know we're going to need to

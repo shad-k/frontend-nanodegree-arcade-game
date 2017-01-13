@@ -33,7 +33,17 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-
+// Method to check if the enemy collides with the player
+Enemy.prototype.checkCollision = function() {
+    //Checking to see if the player is near the enemy bug
+    if(player.y > this.y - 10 && player.y < this.y + 10) {
+        if(player.x > this.x - 50 && player.x < this.x + 60) {
+            // If there is a collision reset the game
+            console.log("collision");
+            player.y = player.initial_y;
+        }
+    }
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
