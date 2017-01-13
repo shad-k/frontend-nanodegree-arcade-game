@@ -54,6 +54,7 @@ Enemy.prototype.checkCollision = function() {
             });
 
             player.y = player.initial_y;
+            player.x = player.initial_x;
         }
     }
 };
@@ -118,7 +119,9 @@ Player.prototype.handleInput = function(keyPressed) {
             }
             break;
         case "enter":
-            gameState = "starting";
+            if(gameState === "menu" || gameState === "lost") {
+                gameState = "starting";
+            }
             break;
     }
 };
