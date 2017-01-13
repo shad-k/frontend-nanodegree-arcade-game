@@ -80,12 +80,15 @@ var Engine = (function(global) {
         }
         // Check to see if player passed the level
         else if(global.gameState === "level-up") {
-            /* This is to remove the small part of head that remains outside
-             * the game track
-             */
             ctx.clearRect(0,0, canvas.width, canvas.height);
             render();
             levelup();
+        }
+        // Check to see if player collided
+        else if(global.gameState === "lost") {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            render();
+            playerLost();
         }
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -244,14 +247,9 @@ var Engine = (function(global) {
 
         if(global.timer < 0 ) {
             increaseSpeed();
+            resetEntities();
             global.gameState = "running";
         }
-    }
-
-    function increaseSpeed() {
-        allEnemies.forEach(function(enemy) {
-            enemy.speed += 100;
-        })
     }
 
     /* This function does nothing but it could have been a good place to
@@ -280,6 +278,33 @@ var Engine = (function(global) {
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
             enemy.checkCollision();
+        });
+    }
+
+    /* This function is called by main when the player collides with enemy
+     * It shows the "Game Over" screen and give player to restart
+     */
+    function playerLost() {
+        drawScreen();
+        ctx.fillText("To start over press Enter", canvas.width/2, 350);
+        ctx.font = "64px sans-serif";
+        ctx.fillText("Game Over!", canvas.width/2, 250);
+        resetEntities();
+    }
+
+    // This function speeds up the bug as the levels increase
+    function increaseSpeed() {
+        allEnemies.forEach(function(enemy) {
+            enemy.speed += 100;
+        })
+    }
+
+    /* This function calls the resetEnemy function for each of the enemy objects
+     * to reset them to the original place
+     */
+    function resetEntities() {
+        allEnemies.forEach(function(enemy) {
+            enemy.resetEnemy();
         });
     }
 

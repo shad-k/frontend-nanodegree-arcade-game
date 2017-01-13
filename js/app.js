@@ -12,7 +12,7 @@ var Enemy = function(y, speed) {
     this.y = y; //Starting value
 
     //The speed of our enemies
-    this.speed = speed
+    this.speed = speed;
 };
 
 // Update the enemy's position, required method for game
@@ -33,6 +33,10 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.prototype.resetEnemy = function() {
+    this.x = -100;
+}
+
 /* Method to check if the enemy collides with the player
  * Checks if the player's location is the same as the bug location.
  * If yes, raises the collision state and resets the player
@@ -43,6 +47,12 @@ Enemy.prototype.checkCollision = function() {
         if(player.x > this.x - 50 && player.x < this.x + 70) {
             // If there is a collision reset the game
             gameState = "lost";
+            level = 1;
+            timer = 0;
+            allEnemies.forEach(function(enemy) {
+                enemy.speed -= (player.level - 1) * 100;
+            });
+
             player.y = player.initial_y;
         }
     }
@@ -63,6 +73,12 @@ var Player = function() {
     //The location of our player
     this.x = this.initial_x;
     this.y = this.initial_y;
+
+    /* Keeps a track of the current player level
+     * Also used for resetting the bugs back to their initial speed
+     * when the game is restarted after player loses
+     */
+    this.level = 1;
 };
 
 /*  No use for this method currently since the player's position is updated
@@ -117,6 +133,7 @@ Player.prototype.won = function() {
         timer = 3;
         gameState = "level-up";
         level++;
+        player.level = level;
     }
 };
 
