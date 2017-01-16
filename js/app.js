@@ -59,6 +59,12 @@ Enemy.prototype.checkCollision = function() {
     }
 };
 
+// This function is called by the increaseSpeed function in the engine.js
+// file to increase the speed of the bugs on level up.
+Enemy.prototype.increase = function() {
+    this.speed += 100;
+};
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.

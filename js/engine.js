@@ -314,7 +314,8 @@ var Engine = (function(global) {
     // This function speeds up the bug as the levels increase
     function increaseSpeed() {
         allEnemies.forEach(function(enemy) {
-            enemy.speed += 100;
+            //enemy.speed += 100;
+            enemy.increase();
         })
     }
 
