@@ -119,9 +119,15 @@ Player.prototype.handleInput = function(keyPressed) {
             }
             break;
         case "enter":
-            if(gameState === "menu" || gameState === "lost") {
+            if(gameState === "menu" || gameState === "lost"
+            	|| gameState === "paused") {
                 gameState = "starting";
             }
+            break;
+        case "esc":
+        	if(gameState === "running") {
+            	gameState = "paused";
+        	}
             break;
     }
 };
@@ -151,9 +157,30 @@ var allEnemies = [new Enemy(60, 10), new Enemy(60, 50), new Enemy(60, 150), new 
 var player = new Player();
 
 
+// This event listener is to prevent browser scrolling with the arrow keys
+document.addEventListener('keydown', function(e) {
+
+	/* Array includes only arrow keys to limit the preventDefault to only
+	 * the arrow keys and not encompass each key as that can have some
+	 * possible side-effect.
+	 */
+	var allowedKeys = {
+        37: 'left',
+        38: 'up',
+        39: 'right',
+        40: 'down'
+    };
+
+    if(allowedKeys[e.keyCode]) {
+    	// To prevent browser scrolling
+		e.preventDefault();
+    }
+});
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
+
     var allowedKeys = {
         37: 'left',
         38: 'up',

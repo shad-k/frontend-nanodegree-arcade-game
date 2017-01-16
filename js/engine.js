@@ -26,6 +26,8 @@ var Engine = (function(global) {
         lastTime,
         timer = 3;
 
+
+
     // The variable stores the current level of the game, starting from 1
     var level = 1;
 
@@ -89,6 +91,10 @@ var Engine = (function(global) {
             ctx.clearRect(0,0, canvas.width, canvas.height);
             render();
             playerLost();
+        }
+        else if(global.gameState === "paused") {
+        	render();
+        	gamePaused();
         }
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -247,9 +253,22 @@ var Engine = (function(global) {
 
         if(global.timer < 0 ) {
             increaseSpeed();
-            resetEntities();
+            //resetEntities();
             global.gameState = "running";
         }
+    }
+
+    /* This function is called by main when the player pauses the game.
+     * The function displays the pause screen till the player restarts
+     * the game by pressing Enter.
+     */
+    function gamePaused() {
+    	if(gameState !== "running") {
+    		drawScreen();
+    		ctx.fillText("Press Enter to restart", canvas.width/2, 350);
+    		ctx.font = "64px sans-serif";
+    		ctx.fillText("Paused", canvas.width/2, 250);
+    	}
     }
 
     /* This function does nothing but it could have been a good place to
