@@ -9,6 +9,11 @@ body {
 	padding-right: 5%;
 }
 
+
+.left-align {
+	text-align: left;
+}
+
 canvas {
 	float: left;
 }
