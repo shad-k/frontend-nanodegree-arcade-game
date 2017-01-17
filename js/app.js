@@ -143,12 +143,12 @@ Player.prototype.won = function() {
     if(player.y < 0 ) {
 
         console.log("Player has won");
-        player.y = player.initial_y;
-        player.x = player.initial_x;
+        this.y = this.initial_y;
+        this.x = this.initial_x;
         timer = 3;
         gameState = "level-up";
         level++;
-        player.level = level;
+        this.level = level;
     }
 };
 
