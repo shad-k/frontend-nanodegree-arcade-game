@@ -276,7 +276,7 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-
+    // noop
     }
 
     /* This function draws a transparent black screen for showing messages
@@ -316,7 +316,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             //enemy.speed += 100;
             enemy.increase();
-        })
+        });
     }
 
     /* This function calls the resetEnemy function for each of the enemy objects

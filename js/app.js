@@ -35,7 +35,7 @@ Enemy.prototype.render = function() {
 
 Enemy.prototype.resetEnemy = function() {
     this.x = -100;
-}
+};
 
 /* Method to check if the enemy collides with the player
  * Checks if the player's location is the same as the bug location.
