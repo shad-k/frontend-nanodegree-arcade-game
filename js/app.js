@@ -140,7 +140,7 @@ Player.prototype.handleInput = function(keyPressed) {
 
 // This method checks to see if the player has won the game
 Player.prototype.won = function() {
-    if(player.y < 0 ) {
+    if(this.y < 0 ) {
 
         console.log("Player has won");
         this.y = this.initial_y;
