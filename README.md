@@ -1,6 +1,6 @@
 # Classic Arcade Game: Frogger
 
-This project is a part of Udacity's Front-End Web Developer Nano Degree. It's a classic arcade game known as Frogger.
+This project is a part of Udacity's Front-End Web Developer Nano Degree. It's a classic arcade game known as Frogger. Click [here](https://shad-k.github.io/frontend-nanodegree-arcade-game/) for a live version of the game.
 
 ## About
 The purpose of the game is to guide the player character to the water without getting bit by the enemy bugs. The speed of the enemy bugs increases with each level.
